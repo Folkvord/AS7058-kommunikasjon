@@ -19,25 +19,26 @@ PAYLOAD_LEN_OFFSET  = 3     # Offsettet fra begynnelsen til lengden av payloaden
 PAYLOAD_OFFSET      = 7     # Offsettet fra begynnelsen av responsen til selve payloaden UTEN SYNCBYTE
 
 # SYNKRONE
-CMD_BASE_ID_APPL_NAME       = bytes([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Sender applikasjonsnavnet til brettet
-CMD_BASE_ID_VERSION         = bytes([0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00])     # Sender versjonen av firmvaren brettet bruker
-CMD_BASE_ID_SERIAL_NUMBER   = bytes([0x13, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Sender seriellnummeret til brettet
+CMD_BASE_ID_APPL_NAME               = bytes([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Sender applikasjonsnavnet til brettet
+CMD_BASE_ID_VERSION                 = bytes([0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00])     # Sender versjonen av firmvaren brettet bruker
+CMD_BASE_ID_SERIAL_NUMBER           = bytes([0x13, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Sender seriellnummeret til brettet
 
-CMD_ID_VSC_INITIALIZE       = bytes([0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Starter innsammlings komponentene 
-CMD_ID_VSC_SHUTDOWN         = bytes([0x65, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Stopper innsammlings komponentene 
-CMD_ID_VSC_GET_VERSION_CL   = bytes([0x6d, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Henter versjonen av Chip Library
-CMD_ID_VSC_GET_VERSION_AM   = bytes([0x6d, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00])     # Henter versjonen av Application Manager
+CMD_ID_VSC_INITIALIZE               = bytes([0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Starter innsammlings komponentene 
+CMD_ID_VSC_SHUTDOWN                 = bytes([0x65, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Stopper innsammlings komponentene 
+CMD_ID_VSC_GET_VERSION_CL           = bytes([0x6d, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Henter versjonen av Chip Library
+CMD_ID_VSC_GET_VERSION_AM           = bytes([0x6d, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00])     # Henter versjonen av Application Manager
 
-CMD_ID_VSC_START_MEASUREMENT= bytes([0x6e, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Starter innsammling: Regular (Funker med mod_cmd())
-CMD_ID_VSC_STOP_MEASUREMENT = bytes([0x6f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Stopper innsammling
+CMD_ID_VSC_START_MEASUREMENT        = bytes([0x6e, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Starter innsammling: Regular (Funker med mod_cmd())
+CMD_ID_VSC_STOP_MEASUREMENT         = bytes([0x6f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Stopper innsammling
+CMD_ID_VSC_AM_SET_SIGNAL_ROUTING    = bytes([0x70, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Signal rounting
 
 # vvv FIX PLZ vvv
-CMD_ID_VSC_AM_ENABLE_APPS   = bytes([0x71, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00])     # Starter opp applikasjoner (Payload er spesifik: se dokument)
-CMD_ID_VSC_AM_APP_CONFIG    = bytes([0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Redigerer en applikasjon (TargetID og payload er spesifik: se dokument)
-
-# ASYNKRONE
-CMD_ID_VSC_AM_APP_OUTPUT    = bytes([0x73, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Henter bio-målinger fra en innsamlingssesjon (brukes etter START_MEASUREMENT) (output payload depends: se dokument)
-CMD_ID_VSC_MEAS_ERROR       = bytes([0x74, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Sier i fra om en feil under en bio-målinger
+CMD_ID_VSC_AM_ENABLE_APPS           = bytes([0x71, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00])     # Starter opp applikasjoner (Payload er spesifik: se dokument)
+CMD_ID_VSC_AM_APP_CONFIG            = bytes([0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Redigerer en applikasjon (TargetID og payload er spesifik: se dokument)
+        
+# ASYNKRONE     
+CMD_ID_VSC_AM_APP_OUTPUT            = bytes([0x73, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Henter bio-målinger fra en innsamlingssesjon (brukes etter START_MEASUREMENT) (output payload depends: se dokument)
+CMD_ID_VSC_MEAS_ERROR               = bytes([0x74, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Sier i fra om en feil under en bio-målinger
 
 
 # Gir navnet til en kommando basert på kommando_iden
