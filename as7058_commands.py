@@ -35,14 +35,14 @@ CMD_ID_VSC_AM_SET_SIGNAL_ROUTING    = bytes([0x70, 0x00, 0x00, 0x00, 0x00, 0x00,
 # vvv FIX PLZ vvv
 CMD_ID_VSC_AM_ENABLE_APPS           = bytes([0x71, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00])     # Starter opp applikasjoner (Payload er spesifik: se dokument)
 CMD_ID_VSC_AM_APP_CONFIG            = bytes([0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Redigerer en applikasjon (TargetID og payload er spesifik: se dokument)
-        
+
 # ASYNKRONE     
 CMD_ID_VSC_AM_APP_OUTPUT            = bytes([0x73, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Henter bio-målinger fra en innsamlingssesjon (brukes etter START_MEASUREMENT) (output payload depends: se dokument)
 CMD_ID_VSC_MEAS_ERROR               = bytes([0x74, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Sier i fra om en feil under en bio-målinger
 
 
 # Gir navnet til en kommando basert på kommando_iden
-def get_command_from_id(command_id) -> str:
+def get_command_from_id(command_id: bytes) -> str:
     command_map = {
         0x00: "CMD_BASE_ID_APPL_NAME",
         0x01: "CMD_BASE_ID_VERSION",
@@ -68,7 +68,7 @@ def get_command_from_id(command_id) -> str:
 
 
 # Henter den riktige feilmeldingen til en errorkode
-def get_error_desc(error_code) -> str:
+def get_error_desc(error_code: bytes) -> str:
     error_descriptions = {
         0x00: "Operation was successful.",
         0x01: "Operation is not permitted.",
@@ -123,7 +123,7 @@ def get_error_desc(error_code) -> str:
 # Tar en kommando og returnerer den samme kommandoen med de modifiserte verdiene
 # Dersom man endrer payloaden, endres payload_len iht payloadens størrelse
 # Alle input tas inn som int
-def mod_cmd(cmd, target_id=None, error_code=None, payload=None) -> bytes:
+def mod_cmd(cmd: bytes, target_id: int = None, error_code: int = None, payload: int = None) -> bytes:
 
     # Kopier kommandoen over til en listeform
     modded_cmd = []
@@ -142,8 +142,8 @@ def mod_cmd(cmd, target_id=None, error_code=None, payload=None) -> bytes:
         modded_cmd[2] = error_code
 
     if payload is not None:
-        if payload >= 0x4294967296:
-            raise ValueError("Payloaden kan bare være 16 777 215 bytes")
+        #if payload >= 0x4294967296:
+        #    raise ValueError("Payloaden kan bare være 16 777 215 bytes")
 
         # Håndter den nye payload lengden:
         # Finn ut hva den nye payload_len er ved å se på lengden av payloaden LOLL

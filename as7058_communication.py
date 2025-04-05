@@ -24,7 +24,7 @@ class Communicator:
 
 
     # Tar inn com-porten brettet er koblet til og baudraten
-    def __init__(self, com_port, baud_rate, timeout=0.01):
+    def __init__(self, com_port: str, baud_rate: int, timeout: float = 0.01):
         self.timeout = timeout
         self.ser = self.__connect(com_port, baud_rate, timeout)
         
@@ -32,7 +32,7 @@ class Communicator:
     # Skriver en kommando til brettet og leser responsen
     # Bytes      --> Antall bytes som skal leses (Grunninstillt til 100 bytes)
     # Return_str --> Om metoden skal returnere responsen som en string eller bytes (Grunninstillt til å returnere string)
-    def write(self, command, bytes=100, return_str=True) -> str:
+    def write(self, command: bytes, bytes: int = 100, return_str: bool = True) -> str:
         
         # Formater kommandoen til en RPC-pakke
         crc_value = crc16(SYNC_BYTE + command)
@@ -59,16 +59,16 @@ class Communicator:
             return response
 
 
-    def measure_bio_data(self, log_file=None, measure_cycles=1000):
+    def measure_heart_rate(self, log_file: str = None, measure_cycles: int = 1000):
 
-        if log_file is not None:
-            file = open(log_file, "r")
-        
+        if log_file:
+            file = open(log_file, "w")
+
         for cycle in range(0, measure_cycles):
+            
+            
 
-            data = self.ser.read()
-
-
+            pass
 
 
     
@@ -76,7 +76,7 @@ class Communicator:
 
     # Kobler til en com-port
     # Hvis koblingen nektes, exiterer programmet
-    def __connect(self, com_port, baud_rate, timeout) -> serial:
+    def __connect(self, com_port: str, baud_rate: int, timeout: float) -> serial:
         try:
             ser = serial.Serial(port=com_port, baudrate=baud_rate, timeout=timeout)
             print(f"Koblet til: {com_port}")
@@ -91,7 +91,7 @@ class Communicator:
     # Sjekker etter feil gitt av en respons. Brukes BARE for å melde om en feilkode:
     # Om en feil returneres printes en melding til terminalen, men ingenting stoppes / kastes.
     # Errorkoden lagres i attributten: self.last_exit_code
-    def __check_error_code(self, response) -> bool:
+    def __check_error_code(self, response: bytes) -> bool:
 
         # Kode == 0 --> ingen feil
         error_code = response[ERROR_CODE_OFFSET]
@@ -110,7 +110,7 @@ class Communicator:
     
     
     # Henter payloaden i form av en string
-    def __payload_as_string(self, response) -> str:
+    def __payload_as_string(self, response: bytes) -> str:
     
         # Hent lengden av payloaden
         payload_length = 0
