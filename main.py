@@ -1,5 +1,6 @@
 import as7058_communication as a
 import as7058_commands as c
+import as7058_output_parser as p
 
 COM_PORT = "COM3"
 BAUD_RATE = 115200
@@ -7,8 +8,11 @@ BAUD_RATE = 115200
 def main():
     
     com = a.Communicator(COM_PORT, BAUD_RATE)
-    write_idenity(com)
+    write_idenity(com)  
 
+    com.write(c.CMD_ID_VSC_INITIALIZE)
+    com.write(c.CMD_ID_VSC_START_MEASUREMENT)
+    com.write(c.CMD_ID_VSC_SHUTDOWN)
 
 
 # Henter identiteten til brettet
