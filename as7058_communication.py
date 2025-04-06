@@ -3,17 +3,11 @@ import struct
 import crcmod
 
 import as7058_commands as c
+import as7058_macros as m
 
 # CRC-16-CCITT relaterte konstanter
 SYNC_BYTE = bytes([0x55])                                       # Sync-byten hver kommando trenger
 crc16 = crcmod.mkCrcFun(0x11021, initCrc=0xFFFF, rev=False)     # Hva programmet bruker til å kalkulere checksummen
-
-# Konstanter relatert til oppsettet av responser (MED SYNC-BYTE)
-COMMAND_ID_OFFSET   = 1       # Offsettet til kommando-IDen
-TARGET_ID_OFFSET    = 2       # Offsettet til target-IDen
-ERROR_CODE_OFFSET   = 3       # Offsettet til errorkoden
-PAYLOAD_LEN_OFFSET  = 4       # Offsettet fra begynnelsen til lengden av payloaden
-PAYLOAD_OFFSET      = 8       # Offsettet fra begynnelsen av responsen til selve payloaden
 
 
 class Communicator:
@@ -43,33 +37,16 @@ class Communicator:
         self.ser.write(formated_command)
         response = self.ser.read(bytes)
 
-        # Sjekker om ingen respons ble gitt
-        if response == b'':
-            print("OBS: INGEN RESPONS GITT")
-            return None
-
         # Sjekk for feil
         if self.__check_error_code(response):
             return None
 
         # Returner string eller bytes
         if return_str: 
-            return self.__payload_as_string(response)
+            return payload_as_string(response)
         else: 
             return response
-
-
-    def measure_heart_rate(self, log_file: str = None, measure_cycles: int = 1000):
-
-        if log_file:
-            file = open(log_file, "w")
-
-        for cycle in range(0, measure_cycles):
-            
-            
-
-            pass
-
+        
 
     
     #####               Private metoder                  #####
@@ -93,14 +70,21 @@ class Communicator:
     # Errorkoden lagres i attributten: self.last_exit_code
     def __check_error_code(self, response: bytes) -> bool:
 
+        # Sjekker om det kom en tom respons
+        if response == b'':
+            print("-"*60)
+            print("Kommandoen ga ingen respons")
+            print("-"*60)
+            return None
+
         # Kode == 0 --> ingen feil
-        error_code = response[ERROR_CODE_OFFSET]
+        error_code = response[m.ERROR_CODE_OFFSET_W_SYNC]
         self.last_exit_code = error_code
         if(error_code == 0):
             return False
 
         # Hvis ikke --> En feil
-        faulty_command = c.get_command_from_id(response[COMMAND_ID_OFFSET])
+        faulty_command = c.get_command_from_id(response[m.COMMAND_ID_OFFSET_W_SYNC])
         error_msg = c.get_error_desc(error_code)
         print("-"*60)
         print(f"Error kastet av:\t{faulty_command} ({error_code})")
@@ -109,18 +93,20 @@ class Communicator:
         return True
     
     
-    # Henter payloaden i form av en string
-    def __payload_as_string(self, response: bytes) -> str:
+# Henter payloaden i form av en string
+# Brukes som regel av kommandoene som returnerer en stringlike payload
+# F.eks: CMD_BASE_ID_VERSION som gir versjonen av firmwaret
+def payload_as_string(response: bytes) -> str:
     
-        # Hent lengden av payloaden
-        payload_length = 0
-        for byte_index in range(PAYLOAD_LEN_OFFSET, PAYLOAD_OFFSET):
-            payload_length += response[byte_index]
+    # Hent lengden av payloaden
+    payload_length = 0
+    for byte_index in range(m.PAYLOAD_LEN_OFFSET_W_SYNC, m.PAYLOAD_OFFSET_W_SYNC):
+        payload_length += response[byte_index]
 
-        # Ekstrakt payloaden
-        payload = []
-        for byte in range(0, payload_length):
-            payload.append(chr(response[PAYLOAD_OFFSET + byte]))
+    # Ekstrakt payloaden
+    payload = []
+    for byte_index in range(m.PAYLOAD_OFFSET_W_SYNC, m.PAYLOAD_OFFSET_W_SYNC + payload_length):
+        payload.append(chr(response[byte_index]))
 
-        return ''.join(payload)
+    return ''.join(payload)
     
