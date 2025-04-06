@@ -1,12 +1,5 @@
-# Konstanter for å vite hvor langt inn payloaden ligger HUSK Å ENDRE TILBAKE TIL MED SYNC BYTE
-PAYLOAD_LEN_OFFSET  = 3
-PAYLOAD_OFFSET      = 7
+import as7058_macros as m
 
-# Konstanter
-FIFO_SAMPLE_SIZE = 3
-ACC_SAMPLE_SIZE = 6
-AGC_STATUS_SIZE = 4
-STATUS_EVENT_SIZE = 9
 
 # Oppsettet til målingen av rå data
 RAW_OUTPUT_MAX_LEN = 149
@@ -15,9 +8,9 @@ RAW_OUTPUT = {
     "fifo_samples_num"                  : 0x00,     # uint8, 1 byte
     "acc_samples_num"                   : 0x00,     # uint8, 1 byte
     "flags_and_agc_statuses_num"        : 0x00,     # uint8, 1 byte
-    "ext_event_occurrence_num_present"  : bool,     # bool 1 bit
-    "status_event_present"              : bool,     # bool 1 bit
-    "agc_statuses_num"                  :  0x0,     # nibble 4 bit
+    "ext_event_occurrence_num_present"  : bool,     # bool 1 bit    |
+    "status_event_present"              : bool,     # bool 1 bit    |-> Ekstra: nedbrytning av "flags_and_agc_statuses_num"
+    "agc_statuses_num"                  :  0x0,     # nibble 4 bit  |
     "fifo_samples"                      : 0x00,     # array med uint24, x-bytes     
     "acc_samples"                       : 0x00,     # array med uint24, x-bytes     består av tre koordinater på 2 bytes hver 2*3=6 bytes
     "agc_statuses"                      : 0x00,     # array med uint24, x-bytes
@@ -40,23 +33,21 @@ HRM_OUTPUT = {
 def parse_raw_payload(output: bytes) -> dict:
     parsed_output = RAW_OUTPUT
 
-    """ Mulig feil med int.from_bytes() ???? """
     # fiks inn en loop herregud
-    parsed_output["packet_counter"] = bytes(output[PAYLOAD_OFFSET])
-    parsed_output["fifo_samples_num"] = bytes([output[PAYLOAD_OFFSET+1]])
-    parsed_output["acc_samples_num"] = bytes([output[PAYLOAD_OFFSET+2]])
-    parsed_output["flags_and_agc_statuses_num"] = bytes([output[PAYLOAD_OFFSET+3]])
+    parsed_output["packet_counter"] = bytes(output[m.PAYLOAD_OFFSET])
+    parsed_output["fifo_samples_num"] = bytes([output[m.PAYLOAD_OFFSET+1]])
+    parsed_output["acc_samples_num"] = bytes([output[m.PAYLOAD_OFFSET+2]])
+    parsed_output["flags_and_agc_statuses_num"] = bytes([output[m.PAYLOAD_OFFSET+3]])
 
     # Holder på indeksen fordi her går det unna!!!
-    current_index = PAYLOAD_OFFSET + 4
+    current_index = m.PAYLOAD_OFFSET + 4
 
-    """ Mulig fandango her (uint_24) """
     # Leser antall fifo_statuser og legger dem inn
     fifo_samples = []
     fifo_samples_num = int.from_bytes(parsed_output["fifo_samples_num"]);
     for _ in range(fifo_samples_num):
         single_fifo_sample = bytes([])
-        for _ in range(FIFO_SAMPLE_SIZE):
+        for _ in range(m.FIFO_SAMPLE_SIZE):
             single_fifo_sample += bytes([output[current_index]])
             current_index += 1
         fifo_samples.append(single_fifo_sample)
@@ -67,7 +58,7 @@ def parse_raw_payload(output: bytes) -> dict:
     acc_samples_num = int.from_bytes(parsed_output["acc_samples_num"]);
     for _ in range(acc_samples_num):
         single_acc_sample = bytes([])
-        for _ in range(ACC_SAMPLE_SIZE):
+        for _ in range(m.ACC_SAMPLE_SIZE):
             single_acc_sample += bytes([output[current_index]])
             current_index += 1
         acc_samples.append(single_acc_sample)
@@ -79,7 +70,7 @@ def parse_raw_payload(output: bytes) -> dict:
     parsed_output["agc_statuses_num"] = agc_statuses_num
     for _ in range(agc_statuses_num):
         single_agc_status = bytes([])
-        for _ in range(AGC_STATUS_SIZE):
+        for _ in range(m.AGC_STATUS_SIZE):
             single_agc_status += bytes([output[current_index]])
             current_index += 1
         agc_statuses.append(single_agc_status)
@@ -90,9 +81,8 @@ def parse_raw_payload(output: bytes) -> dict:
     parsed_output["status_event_present"] = status_event_present
     if status_event_present:
 
-        """ Dokumentasjon uklar: Skal være 0 til 9 bytes, men sier ikke om det er reservert 9 bytes eller dynamisk """
         status_events = bytes([])
-        for _ in range(STATUS_EVENT_SIZE):
+        for _ in range(m.STATUS_EVENT_SIZE):
             status_events += bytes([output[current_index]])
             current_index += 1
         parsed_output["status_events"] = status_events
@@ -113,17 +103,17 @@ def parse_raw_payload(output: bytes) -> dict:
 def parse_hrm_payload(output: bytes) -> dict:    
     parsed_output = HRM_OUTPUT
 
-    parsed_output["heart_rate"] = bytes([output[PAYLOAD_OFFSET], output[PAYLOAD_OFFSET+1]])
-    parsed_output["quality"] = bytes([output[PAYLOAD_OFFSET+2]])
-    parsed_output["motion_frequency"] = bytes([output[PAYLOAD_OFFSET+3]])
+    parsed_output["heart_rate"] = bytes([output[m.PAYLOAD_OFFSET], output[m.PAYLOAD_OFFSET+1]])
+    parsed_output["quality"] = bytes([output[m.PAYLOAD_OFFSET+2]])
+    parsed_output["motion_frequency"] = bytes([output[m.PAYLOAD_OFFSET+3]])
     
     pvr_data = bytes([])
-    for byte_index in range(PAYLOAD_OFFSET+4, PAYLOAD_OFFSET+14):
+    for byte_index in range(m.PAYLOAD_OFFSET+4, m.PAYLOAD_OFFSET+14):
         pvr_data += bytes([output[byte_index]])
     parsed_output["pvr_ms"] = pvr_data
 
-    parsed_output["pvr_ms_num"] = output[PAYLOAD_OFFSET+14]
-    parsed_output["reserved"] = output[PAYLOAD_OFFSET+15]
+    parsed_output["pvr_ms_num"] = output[m.PAYLOAD_OFFSET+14]
+    parsed_output["reserved"] = output[m.PAYLOAD_OFFSET+15]
 
     return parsed_output
 
@@ -133,7 +123,7 @@ def get_payload_length(output: bytes) -> int:
 
     # Last inn payload_len inn i en tabell
     payload_len = []
-    for byte_index in range(PAYLOAD_LEN_OFFSET, PAYLOAD_OFFSET):
+    for byte_index in range(m.PAYLOAD_LEN_OFFSET, m.PAYLOAD_OFFSET):
         payload_len.append(output[byte_index])
 
     # Bruker big-endian fordi listen ovenfor er invertert

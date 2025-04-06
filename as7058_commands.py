@@ -12,11 +12,8 @@
 
 import struct
 
-COMMAND_ID_OFFSET   = 0     # Offsettet til kommando-IDen UTEN SYNCBYTE
-TARGET_ID_OFFSET    = 1     # Offsettet til target-IDen UTEN SYNCBYTE
-ERROR_CODE_OFFSET   = 2     # Offsettet til errorkoden UTEN SYNCBYTE
-PAYLOAD_LEN_OFFSET  = 3     # Offsettet fra begynnelsen til lengden av payloaden UTEN SYNCBYTE
-PAYLOAD_OFFSET      = 7     # Offsettet fra begynnelsen av responsen til selve payloaden UTEN SYNCBYTE
+import as7058_macros as m
+
 
 # SYNKRONE
 CMD_BASE_ID_APPL_NAME               = bytes([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Sender applikasjonsnavnet til brettet
@@ -121,7 +118,7 @@ def get_error_desc(error_code: bytes) -> str:
 
 
 # Tar en kommando og returnerer den samme kommandoen med de modifiserte verdiene
-# Dersom man endrer payloaden, endres payload_len iht payloadens størrelse
+# Dersom man endrer payloaden, endres payload_lenght iht payloadens størrelse
 # Alle input tas inn som int
 def mod_cmd(cmd: bytes, target_id: int = None, error_code: int = None, payload: int = None) -> bytes:
 
@@ -142,37 +139,35 @@ def mod_cmd(cmd: bytes, target_id: int = None, error_code: int = None, payload: 
         modded_cmd[2] = error_code
 
     if payload is not None:
-        #if payload >= 0x4294967296:
-        #    raise ValueError("Payloaden kan bare være 16 777 215 bytes")
 
         # Håndter den nye payload lengden:
-        # Finn ut hva den nye payload_len er ved å se på lengden av payloaden LOLL
-        payload_len = 0
-        hex_counter = payload
-        while hex_counter:
-            hex_counter >>= 8
-            payload_len += 1
+        # Finn ut hva den nye payload_lenght er ved å se på lengden av payloaden LOLL
+        payload_lenght = 0
+        byte_counter = payload
+        while byte_counter:
+            byte_counter >>= 8
+            payload_lenght += 1
 
-        # Skriv inn den nye payload_len en
-        payload_len_in_bytes = struct.pack("<I", payload_len)
-        for byte_index in range(0, PAYLOAD_OFFSET-PAYLOAD_LEN_OFFSET):
-            modded_cmd[PAYLOAD_LEN_OFFSET + byte_index] = payload_len_in_bytes[byte_index]
+        # Skriv inn den nye payload_lenght en
+        payload_lenght_in_bytes = struct.pack("<I", payload_lenght)
+        for byte_offset in range(m.PAYLOAD_OFFSET-m.PAYLOAD_LEN_OFFSET):
+            modded_cmd[m.PAYLOAD_LEN_OFFSET + byte_offset] = payload_lenght_in_bytes[byte_offset]
 
         # Håndter payloaden:
         # Payload som liste av bytes
-        payload = payload.to_bytes(payload_len, "little")
+        payload = payload.to_bytes(payload_lenght, "little")
 
         # Finn ut om cmd har en payload fra før av
         # Hvis ikke: append bytes. Hvis: overskriv
-        if len(modded_cmd) == PAYLOAD_OFFSET:
-            for byte_index in range(0, payload_len):
+        if len(modded_cmd) == m.PAYLOAD_OFFSET:
+            for byte_index in range(payload_lenght):
                 modded_cmd.append(payload[byte_index])
         else:
-            for byte_index in range(PAYLOAD_OFFSET, PAYLOAD_OFFSET+payload_len):
+            for byte_index in range(m.PAYLOAD_OFFSET, m.PAYLOAD_OFFSET+payload_lenght):
                 try:
-                    modded_cmd[byte_index] = payload[byte_index-PAYLOAD_OFFSET];    # Overskriver gamle payloadbytes
+                    modded_cmd[byte_index] = payload[byte_index-m.PAYLOAD_OFFSET];    # Overskriver gamle payloadbytes
                 except IndexError: 
-                    modded_cmd.append(payload[byte_index-PAYLOAD_OFFSET])           # Hvis vi har overskrevet og nå skriver utenfor payloaden som var
+                    modded_cmd.append(payload[byte_index-m.PAYLOAD_OFFSET])           # Hvis vi har overskrevet og nå skriver utenfor payloaden som var
 
 
     return bytes(modded_cmd)
