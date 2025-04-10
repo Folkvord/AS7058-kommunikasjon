@@ -12,6 +12,9 @@ ERROR_CODE_OFFSET   = 2
 PAYLOAD_LEN_OFFSET  = 3
 PAYLOAD_OFFSET      = 7
 
+# Antall bytes i payload_length segmentet
+PAYLOAD_LEN_BYTES = PAYLOAD_OFFSET - PAYLOAD_LEN_OFFSET
+
 # Datatyper (i bytes)
 UINT8 = 1
 UINT16 = 2
