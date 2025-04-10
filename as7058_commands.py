@@ -9,33 +9,44 @@
 # BIG ENDIAN:       12 34
 # LITTLE ENDIAN :   34 12
 #
-
-import struct
+#   ! INGEN KOMMANDOER HAR EN FORHÅNDSDEFINERT PAYLOAD !
+#   MAN MÅ ENDRE PÅ DEN SELV MED mod_cmd()
+#   PAYLOAD_LENGTH ER DEFINERT
+#
 
 import as7058_macros as m
+import as7058_datatypes as d
 
+# Info og versjon
+CMD_BASE_ID_APPL_NAME                   = bytes([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Sender applikasjonsnavnet til brettet
+CMD_BASE_ID_VERSION                     = bytes([0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Sender versjonen av firmvaren brettet bruker
+CMD_BASE_ID_SERIAL_NUMBER               = bytes([0x13, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Sender seriellnummeret til brettet
+CMD_ID_VSC_GET_VERSION_CL               = bytes([0x6d, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Henter versjonen av Chip Library
+CMD_ID_VSC_GET_VERSION_AM               = bytes([0x6d, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Henter versjonen av Application Manager
 
-# SYNKRONE
-CMD_BASE_ID_APPL_NAME               = bytes([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Sender applikasjonsnavnet til brettet
-CMD_BASE_ID_VERSION                 = bytes([0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00])     # Sender versjonen av firmvaren brettet bruker
-CMD_BASE_ID_SERIAL_NUMBER           = bytes([0x13, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Sender seriellnummeret til brettet
+# Start & stopp
+CMD_ID_VSC_INITIALIZE                   = bytes([0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Starter innsammlings komponentene 
+CMD_ID_VSC_SHUTDOWN                     = bytes([0x65, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Stopper innsammlings komponentene 
 
-CMD_ID_VSC_INITIALIZE               = bytes([0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Starter innsammlings komponentene 
-CMD_ID_VSC_SHUTDOWN                 = bytes([0x65, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Stopper innsammlings komponentene 
-CMD_ID_VSC_GET_VERSION_CL           = bytes([0x6d, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Henter versjonen av Chip Library
-CMD_ID_VSC_GET_VERSION_AM           = bytes([0x6d, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00])     # Henter versjonen av Application Manager
+# Register
+CMD_ID_VSC_CL_SET_REG_GROUP             = bytes([0x66, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Skriver til en gruppe registre
+CMD_ID_VSC_CL_GET_REG_GROUP             = bytes([0x67, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Henter verdiene til en gruppe registre
+CMD_ID_VSC_CL_WRITE_REGISTER            = bytes([0x6a, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00])     # Skriver til et register
+CMD_ID_VSC_CL_READ_REGISTER             = bytes([0x6b, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00])     # Leser fra et register
 
-CMD_ID_VSC_START_MEASUREMENT        = bytes([0x6e, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Starter innsammling: Regular (Funker med mod_cmd())
-CMD_ID_VSC_STOP_MEASUREMENT         = bytes([0x6f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Stopper innsammling
-CMD_ID_VSC_AM_SET_SIGNAL_ROUTING    = bytes([0x70, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Signal rounting
+# Måling
+CMD_ID_VSC_START_MEASUREMENT            = bytes([0x6e, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Starter innsammling: Regular (Funker med mod_cmd())
+CMD_ID_VSC_STOP_MEASUREMENT             = bytes([0x6f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Stopper innsammling
 
-# vvv FIX PLZ vvv
-CMD_ID_VSC_AM_ENABLE_APPS           = bytes([0x71, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00])     # Starter opp applikasjoner (Payload er spesifik: se dokument)
-CMD_ID_VSC_AM_APP_CONFIG            = bytes([0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Redigerer en applikasjon (TargetID og payload er spesifik: se dokument)
+# Kalibrering
+CMD_ID_VSC_AM_SET_SIGNAL_ROUTING        = bytes([0x70, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Signal rounting
+CMD_ID_VSC_AM_ENABLE_APPS               = bytes([0x71, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00])     # Starter opp applikasjoner (Payload er spesifik: se dokument)
+CMD_ID_VSC_AM_APP_CONFIG                = bytes([0x72, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Redigerer en applikasjon (TargetID og payload er spesifik: se dokument)
+CMD_ID_VSC_AM_CONFIGURE_PREPROCESSING   = bytes([0x7b, 0x00, 0x00, 0x78, 0x00, 0x00, 0x00])
 
 # ASYNKRONE     
-CMD_ID_VSC_AM_APP_OUTPUT            = bytes([0x73, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Henter bio-målinger fra en innsamlingssesjon (brukes etter START_MEASUREMENT) (output payload depends: se dokument)
-CMD_ID_VSC_MEAS_ERROR               = bytes([0x74, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Sier i fra om en feil under en bio-målinger
+CMD_ID_VSC_AM_APP_OUTPUT                = bytes([0x73, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Henter bio-målinger fra en innsamlingssesjon (brukes etter START_MEASUREMENT) (output payload depends: se dokument)
+CMD_ID_VSC_MEAS_ERROR                   = bytes([0x74, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])     # Sier i fra om en feil under en bio-målinger
 
 
 # Gir navnet til en kommando basert på kommando_iden
@@ -49,8 +60,13 @@ def get_command_from_id(command_id: bytes) -> str:
         0x65: "CMD_ID_VSC_SHUTDOWN",
         0x6d: "CMD_ID_VSC_GET_VERSION_CL / _AM",
 
+        0x66: "CMD_ID_VSC_CL_SET_REG_GROUP",
+        0x67: "CMD_ID_VSC_CL_GET_REG_GROUP",
+        0x6a: "CMD_ID_VSC_CL_WRITE_REGISTER",
+        0x6b: "CMD_ID_VSC_CL_READ_REGISTER",
         0x6e: "CMD_ID_VSC_START_MEASUREMENT",
         0x6f: "CMD_ID_VSC_STOP_MEASUREMENT",
+        0x70: "CMD_ID_VSC_AM_SET_SIGNAL_ROUTING",
         0x71: "CMD_ID_VSC_AM_ENABLE_APPS",
         0x72: "CMD_ID_VSC_AM_APP_CONFIG",
 
@@ -119,55 +135,33 @@ def get_error_desc(error_code: bytes) -> str:
 
 # Tar en kommando og returnerer den samme kommandoen med de modifiserte verdiene
 # Dersom man endrer payloaden, endres payload_lenght iht payloadens størrelse
-# Alle input tas inn som int
-def mod_cmd(cmd: bytes, target_id: int = None, error_code: int = None, payload: int = None) -> bytes:
-
-    # Kopier kommandoen over til en listeform
-    modded_cmd = []
-    for byte_index in range(0, len(cmd)):
-        modded_cmd.append(cmd[byte_index])
+def mod_cmd(cmd: bytes, target_id: bytes = None, payload: bytes = None) -> bytes:
+    
+    modded_cmd = d.uint8(cmd[m.COMMAND_ID_OFFSET])
 
     # Endre attributtene 
     if target_id is not None:
         if target_id >= 256:
             raise ValueError("TargetID kan bare være en byte")
-        modded_cmd[1] = target_id
-    
-    if error_code is not None:
-        if error_code >= 256:
-            raise ValueError("Error-code kan bare være en byte")
-        modded_cmd[2] = error_code
+        modded_cmd += d.uint8(target_id)
+    else:
+        modded_cmd += d.uint8(0)
+
+    # Errorkode
+    modded_cmd += d.uint8(0)
 
     if payload is not None:
-
-        # Håndter den nye payload lengden:
-        # Finn ut hva den nye payload_lenght er ved å se på lengden av payloaden LOLL
-        payload_lenght = 0
-        byte_counter = payload
-        while byte_counter:
-            byte_counter >>= 8
-            payload_lenght += 1
-
-        # Skriv inn den nye payload_lenght en
-        payload_lenght_in_bytes = struct.pack("<I", payload_lenght)
-        for byte_offset in range(m.PAYLOAD_OFFSET-m.PAYLOAD_LEN_OFFSET):
-            modded_cmd[m.PAYLOAD_LEN_OFFSET + byte_offset] = payload_lenght_in_bytes[byte_offset]
-
-        # Håndter payloaden:
-        # Payload som liste av bytes
-        payload = payload.to_bytes(payload_lenght, "little")
-
-        # Finn ut om cmd har en payload fra før av
-        # Hvis ikke: append bytes. Hvis: overskriv
-        if len(modded_cmd) == m.PAYLOAD_OFFSET:
-            for byte_index in range(payload_lenght):
-                modded_cmd.append(payload[byte_index])
-        else:
-            for byte_index in range(m.PAYLOAD_OFFSET, m.PAYLOAD_OFFSET+payload_lenght):
-                try:
-                    modded_cmd[byte_index] = payload[byte_index-m.PAYLOAD_OFFSET];    # Overskriver gamle payloadbytes
-                except IndexError: 
-                    modded_cmd.append(payload[byte_index-m.PAYLOAD_OFFSET])           # Hvis vi har overskrevet og nå skriver utenfor payloaden som var
-
-
-    return bytes(modded_cmd)
+        
+        # Finner ut lengden av payloaden og plasserer den inn i kommandoen
+        payload_len = len(payload)
+        payload_len_bytes = d.uint32(payload_len)
+        modded_cmd += payload_len_bytes
+        
+        # Legger til payloaden byte for byte
+        for byte in payload:
+            modded_cmd += d.uint8(byte)
+    else:
+        for byte_offset in range(m.PAYLOAD_LEN_BYTES):
+            modded_cmd += d.uint8(cmd[m.PAYLOAD_LEN_OFFSET + byte_offset])
+    
+    return modded_cmd
