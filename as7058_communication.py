@@ -4,11 +4,11 @@ import crcmod
 
 import as7058_commands as c
 import as7058_macros as m
+import as7058_datatypes as d
 
 # CRC-16-CCITT relaterte konstanter
 SYNC_BYTE = bytes([0x55])                                       # Sync-byten hver kommando trenger
 crc16 = crcmod.mkCrcFun(0x11021, initCrc=0xFFFF, rev=False)     # Hva programmet bruker til å kalkulere checksummen
-
 
 class Communicator:
 
@@ -26,11 +26,11 @@ class Communicator:
     # Skriver en kommando til brettet og leser responsen
     # Bytes      --> Antall bytes som skal leses (Grunninstillt til 100 bytes)
     # Return_str --> Om metoden skal returnere responsen som en string eller bytes (Grunninstillt til å returnere string)
-    def write(self, command: bytes, bytes: int = 100, return_str: bool = True) -> str:
+    def write(self, command: bytes, bytes: int = 100, return_str: bool = False) -> str:
         
         # Formater kommandoen til en RPC-pakke
         crc_value = crc16(SYNC_BYTE + command)
-        checksum = struct.pack("<H", crc_value)
+        checksum = d.uint16(crc_value)
         formated_command = SYNC_BYTE + command + checksum
 
         # Skriv og les
@@ -47,6 +47,22 @@ class Communicator:
         else: 
             return response
         
+        
+    def read(self, bytes : int = 100, expected_type : bytes = None):
+        
+        read_data = self.ser.read(bytes)
+        if not expected_type:
+            return read_data
+        
+        if read_data == b'':
+            print("Ingen respons")
+            return read_data
+
+        if read_data[m.COMMAND_ID_OFFSET_W_SYNC] != expected_type[m.COMMAND_ID_OFFSET]:
+            print("Uforventet type")
+        
+        return read_data
+
 
     
     #####               Private metoder                  #####
@@ -72,9 +88,10 @@ class Communicator:
 
         # Sjekker om det kom en tom respons
         if response == b'':
-            print("-"*60)
-            print("Kommandoen ga ingen respons")
-            print("-"*60)
+            #self.last_exit_code = 0
+            #print("-"*60)
+            #print("Kommandoen ga ingen respons")
+            #print("-"*60)
             return None
 
         # Kode == 0 --> ingen feil
