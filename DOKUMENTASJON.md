@@ -1,25 +1,9 @@
-# Pythonbasert AS7058-rammeværk
 
-Merk: Dette rammeverket er laget for utvikling og testing mot AS7058-baserte sensormoduler. Det er laget for læring og praktisk bruk, men ikke nødvendigvis som et generisk bibliotek for alle formål. Bruk det som utgangspunkt for dine egne behov.
-
-## Hva er dette?
-
-Et modulært Python-rammeverk for å kommunisere med og sende kommandoer til et AS7058-sensorbrett via seriellport. Det er bygget for å gi full lavnivåkontroll over registere, kommandoer og målinger.
-
-Det er laget for å:
-- Lære hvordan AS7058 fungerer
-- Eksperimentere med protokollen og datastrukturen
-- Bygge skreddersydd logikk på toppen
-
-Inspirert av dokumentasjonen fra AMS og direkte protokolltesting.
-
----
-
-## Viktige filer
+# Viktige filer
 
 Dette prosjektet består av flere filer, **men tre av dem er viktigst**:
 
-### as7058_communication.py
+## as7058_communication.py
 Inneholder en `Communicator`-klasse som lar deg kommunisere direkte med AS7058-brettet via en COM-port (UART/USB-til-seriell). Klassen håndterer både sending og mottak av data, og gir deg kontroll over lavnivå kommunikasjon med sensoren.
 
 - `write(cmd, bytes_to_read, return_str)`
@@ -35,7 +19,7 @@ Inneholder en `Communicator`-klasse som lar deg kommunisere direkte med AS7058-b
 
 ---
 
-### as7058_datatypes.py
+## as7058_datatypes.py
 Gir deg funksjoner som oversetter verdier til bytes – akkurat slik AS7058-firmwaren krever det.
 
 Inneholder:
@@ -49,13 +33,13 @@ Disse gjør det enkelt å bygge payloads til kommandoer som trenger f.eks. 3-byt
 
 ---
 
-### as7058_commands.py
+## as7058_commands.py
 
 Inneholder alle ferdigdefinerte kommandoer og hjelpefunksjoner for å modifisere dem før de sendes til AS7058-brettet. Hver kommando er representert som en `bytes`-konstant og inkluderer felt som `cmdID`, `targetID`, `errcode` og `payload_len`.
 
 >  Merk: Kommandoene inkluderer **ikke** sync-byte (`0x55`), payload-data eller CRC-checksum. Disse legges til rett før sending.
 
-#### Viktig funksjon:
+### Viktig funksjon:
 
 - `mod_cmd(cmd, targetID=None, payload=None)`
   - Brukes for å tilpasse en eksisterende kommando med ny `targetID` og/eller `payload`.
@@ -74,7 +58,7 @@ Vil du sende en kommando til brettet?
 
 ---
 
-## Hvordan bruke rammeverket
+# Hvordan bruke rammeverket
 
 1. **Start med `as7058_commands.py`**  
    Velg en kommando, og bruk `mod_cmd()` til å sette target-ID og payload.
@@ -87,21 +71,21 @@ Vil du sende en kommando til brettet?
 
 ---
 
-## Eksempel
+# Eksempel
 
 ```python
-from as7058_commands import CMD_GET_VERSION, mod_cmd
+from as7058_commands import CMD_ID_VSC_CL_READ_REGISTER, mod_cmd
 from as7058_communication import Communicator
 
 com = Communicator("COM3", 115200, timeout=1)
-cmd = mod_cmd(CMD_GET_VERSION)
-response = com.write(cmd, bytes_to_read=10, return_str=True)
+cmd = mod_cmd(CMD_ID_VSC_CL_READ_REGISTER, payload=0x0F)
+response = com.write(cmd, bytes_to_read=100, return_str=True)
 print(response)
 ```
 
 ---
 
-## TL;DR
+# TL;DR
 
 - Dette rammeverket gir deg lavnivå-kontroll over hele AS7058-brettet
 - Du bygger kommandoene manuelt, som gjør det perfekt for testing og utforsking
