@@ -1,0 +1,217 @@
+# Chat har laget disse; jeg er ikke gæærn
+
+# Register groups
+POWER_REG_GRP = 0x0
+CRTL_REG_GRP  = 0x1
+LED_REG_GRP   = 0x2
+PD_REG_GRP    = 0x3
+IOS_REG_GRP   = 0x4
+PPG_REG_GRP   = 0x5
+ECG_REG_GRP   = 0x6
+SINC_REG_GRP  = 0x7
+IIR_REG_GRP   = 0x8
+SEQ_REG_GRP   = 0x9
+POST_REG_GRP  = 0xa
+FIFO_REG_GRP  = 0xb
+
+# Power Register Group (ID: 0)
+PWR_ON         = 0x00
+PWR_ISO        = 0x01
+CLK_CFG        = 0x02
+REF_CFG1       = 0x03
+REF_CFG2       = 0x04
+REF_CFG3       = 0x05
+STANDBY_ON1    = 0x06
+STANDBY_ON2    = 0x07
+STANDBY_EN1    = 0x08
+STANDBY_EN2    = 0x09
+STANDBY_EN3    = 0x0A
+STANDBY_EN4    = 0x0B
+STANDBY_EN5    = 0x0C
+STANDBY_EN6    = 0x0D
+STANDBY_EN7    = 0x0E
+STANDBY_EN8    = 0x0F
+STANDBY_EN9    = 0x10
+STANDBY_EN10   = 0x11
+STANDBY_EN11   = 0x12
+STANDBY_EN12   = 0x13
+STANDBY_EN13   = 0x14
+STANDBY_EN14   = 0x15
+
+# Control Register Group (ID: 1)
+I2C_MODE   = 0x00
+INT_CFG    = 0x01
+IF_CFG     = 0x02
+GPIO_CFG1  = 0x03
+GPIO_CFG2  = 0x04
+IO_CFG     = 0x05
+
+# LED Register group (ID: 2)
+VCSEL_PASSWORD = 0x00
+VCSEL_CFG      = 0x01
+VCSEL_MODE     = 0x02
+LED_CFG        = 0x03
+LED_DRV1       = 0x04
+LED_DRV2       = 0x05
+LED1_ICTRL     = 0x06
+LED2_ICTRL     = 0x07
+LED3_ICTRL     = 0x08
+LED4_ICTRL     = 0x09
+LED5_ICTRL     = 0x0A
+LED6_ICTRL     = 0x0B
+LED7_ICTRL     = 0x0C
+LED8_ICTRL     = 0x0D
+LED_IRNG1      = 0x0E
+LED_IRNG2      = 0x0F
+LED_SUB1       = 0x10
+LED_SUB2       = 0x11
+LED_SUB3       = 0x12
+LED_SUB4       = 0x13
+LED_SUB5       = 0x14
+LED_SUB6       = 0x15
+LED_SUB7       = 0x16
+LED_SUB8       = 0x17
+LOWVDS_WAIT    = 0x18
+
+# PD Register group (ID: 3)
+PDSEL_CFG     = 0x00
+PPG1_PDSEL1   = 0x01
+PPG1_PDSEL2   = 0x02
+PPG1_PDSEL3   = 0x03
+PPG1_PDSEL4   = 0x04
+PPG1_PDSEL5   = 0x05
+PPG1_PDSEL6   = 0x06
+PPG1_PDSEL7   = 0x07
+PPG1_PDSEL8   = 0x08
+PPG2_PDSEL1   = 0x09
+PPG2_PDSEL2   = 0x0A
+PPG2_PDSEL3   = 0x0B
+PPG2_PDSEL4   = 0x0C
+PPG2_PDSEL5   = 0x0D
+PPG2_PDSEL6   = 0x0E
+PPG2_PDSEL7   = 0x0F
+PPG2_PDSEL8   = 0x10
+PPG2_AFESEL1  = 0x11
+PPG2_AFESEL2  = 0x12
+PPG2_AFESEL3  = 0x13
+PPG2_AFESEL4  = 0x14
+PPG2_AFEEN    = 0x15
+
+# IOS Register Group (ID: 4)
+IOS_PPG1_SUB1 = 0x00
+IOS_PPG1_SUB2 = 0x01
+IOS_PPG1_SUB3 = 0x02
+IOS_PPG1_SUB4 = 0x03
+IOS_PPG1_SUB5 = 0x04
+IOS_PPG1_SUB6 = 0x05
+IOS_PPG1_SUB7 = 0x06
+IOS_PPG1_SUB8 = 0x07
+IOS_PPG2_SUB1 = 0x08
+IOS_PPG2_SUB2 = 0x09
+IOS_PPG2_SUB3 = 0x0A
+IOS_PPG2_SUB4 = 0x0B
+IOS_PPG2_SUB5 = 0x0C
+IOS_PPG2_SUB6 = 0x0D
+IOS_PPG2_SUB7 = 0x0E
+IOS_PPG2_SUB8 = 0x0F
+IOS_LEDOFF    = 0x10
+IOS_CFG       = 0x11
+AOC_SAR_THRES = 0x12
+AOC_SAR_RANGE = 0x13
+AOC_SAR_PPG1  = 0x14
+AOC_SAR_PPG2  = 0x15
+
+
+# PPG Register Group (ID: 5)
+PPGMOD_CFG1    = 0x00
+PPGMOD_CFG2    = 0x01
+PPGMOD_CFG3    = 0x02
+PPGMOD1_CFG1   = 0x03
+PPGMOD1_CFG2   = 0x04
+PPGMOD1_CFG3   = 0x05
+PPGMOD2_CFG1   = 0x06
+PPGMOD2_CFG2   = 0x07
+PPGMOD2_CFG3   = 0x08
+
+# ECG Register Group (ID: 6)
+BIOZ_CFG         = 0x00
+BIOZ_EXCIT       = 0x01
+BIOZ_MIXER       = 0x02
+BIOZ_SELECT      = 0x03
+BIOZ_GAIN        = 0x04
+ECGMOD_CFG1      = 0x05
+ECGMOD_CFG2      = 0x06
+ECGIMUX_CFG1     = 0x07
+ECGIMUX_CFG2     = 0x08
+ECGIMUX_CFG3     = 0x09
+ECGAMP_CFG1      = 0x0A
+ECGAMP_CFG2      = 0x0B
+ECGAMP_CFG3      = 0x0C
+ECGAMP_CFG4      = 0x0D
+ECGAMP_CFG5      = 0x0E
+ECGAMP_CFG6      = 0x0F
+ECGAMP_CFG7      = 0x10
+ECG_BIOZ         = 0x11
+LEADOFF_CFG      = 0x12
+LEADOFF_THRESL   = 0x13
+LEADOFF_THRESH   = 0x14
+
+# SINC Register Group (ID: 7)
+PPG_SINC_CFGA    = 0x00
+PPG_SINC_CFGB    = 0x01
+PPG_SINC_CFGC    = 0x02
+PPG_SINC_CFGD    = 0x03
+ECG1_SINC_CFGA   = 0x04
+ECG1_SINC_CFGB   = 0x05
+ECG1_SINC_CFGC   = 0x06
+ECG2_SINC_CFGA   = 0x07
+ECG2_SINC_CFGB   = 0x08
+ECG2_SINC_CFGC   = 0x09
+ECG_SINC_CFG     = 0x0A
+
+# IIR Register Group (ID: 8)
+IIR_CFG             = 0x00
+IIR_RESERVED        = 0x01  # Padding byte
+IIR_COEFF_DATA_SOS  = 0x02  # Multidimensjonalt array, 120 bytes (12x5 int16 verdier)
+
+# Sequencer Register Group (ID: 9)
+IRQ_ENABLE       = 0x00
+PPG_SUB_WAIT     = 0x01
+PPG_SAR_WAIT     = 0x02
+PPG_LED_INIT     = 0x03
+PPG_FREQL        = 0x04
+PPG_FREQH        = 0x05
+PPG1_SUB_EN      = 0x06
+PPG2_SUB_EN      = 0x07
+PPG_MODE_1       = 0x08
+PPG_MODE_2       = 0x09
+PPG_MODE_3       = 0x0A
+PPG_MODE_4       = 0x0B
+PPG_MODE_5       = 0x0C
+PPG_MODE_6       = 0x0D
+PPG_MODE_7       = 0x0E
+PPG_MODE_8       = 0x0F
+PPG_CFG          = 0x10
+ECG_FREQL        = 0x11
+ECG_FREQH        = 0x12
+ECG1_FREQDIVL    = 0x13
+ECG1_FREQDIVH    = 0x14
+ECG2_FREQDIVL    = 0x15
+ECG2_FREQDIVH    = 0x16
+ECG_SUBS         = 0x17
+LEADOFF_INITL    = 0x18
+LEADOFF_INITH    = 0x19
+ECG_INITL        = 0x1A
+ECG_INITH        = 0x1B
+SAMPLE_NUM       = 0x1C
+
+# Post-Processing Register Group (ID: 10)
+PP_CFG      = 0x00
+PPG1_PP1    = 0x01
+PPG1_PP2    = 0x02
+PPG2_PP1    = 0x03
+PPG2_PP2    = 0x04
+
+# FIFO Register Group (ID: 11)
+FIFO_THRESHOLD  = 0x00
+FIFO_CTRL       = 0x01
