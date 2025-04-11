@@ -19,4 +19,4 @@ Inspirert av dokumentasjonen fra AMS og direkte protokolltesting.
 Kristoffer Folkvord - 260562 <br/>
 Sofie Berglund - <br/>
 Edwina Larsen - <br/>
-Sandre To - 
+Sandre To - 260575
