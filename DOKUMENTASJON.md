@@ -27,6 +27,7 @@ Inneholder:
 - `uint16(value)`
 - `uint24(value)`
 - `uint32(value)`
+- `array_type(array)`
 - `custom_type(value, size)`
 
 Disse gjør det enkelt å bygge payloads til kommandoer som trenger f.eks. 3-byters verdier.
