@@ -17,6 +17,6 @@ Inspirert av dokumentasjonen fra AMS og direkte protokolltesting.
 
 ## Gjennomført av:
 Kristoffer Folkvord - 260562 <br/>
-Sofie Berglund - <br/>
+Sofie Berglund - 247511 <br/>
 Edwina Larsen - 260571 <br/>
 Sandre To - 260575
